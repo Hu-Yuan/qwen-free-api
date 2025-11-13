@@ -454,7 +454,9 @@ async function receiveStream(stream: any): Promise<any> {
     const parser = createParser((event) => {
       try {
         if (event.type !== "event") return;
-        if (event.data == "[DONE]") return;
+        const raw = (event.data || "").toString().trim();
+        // 忽略控制类心跳/完成消息
+        if (!raw || raw === "[DONE]" || raw === "[heartbeat]") return;
         // 解析JSON
         const result = _.attempt(() => JSON.parse(event.data));
         if (_.isError(result))
@@ -542,7 +544,9 @@ function createTransStream(stream: any, endCallback?: Function) {
   const parser = createParser((event) => {
     try {
       if (event.type !== "event") return;
-      if (event.data == "[DONE]") return;
+      const raw = (event.data || "").toString().trim();
+      // 忽略控制类心跳/完成消息
+      if (!raw || raw === "[DONE]" || raw === "[heartbeat]") return;
       // 解析JSON
       const result = _.attempt(() => JSON.parse(event.data));
       if (_.isError(result))
@@ -644,7 +648,9 @@ async function receiveImages(
     const parser = createParser((event) => {
       try {
         if (event.type !== "event") return;
-        if (event.data == "[DONE]") return;
+        const raw = (event.data || "").toString().trim();
+        // 忽略控制类心跳/完成消息
+        if (!raw || raw === "[DONE]" || raw === "[heartbeat]") return;
         // 解析JSON
         const result = _.attempt(() => JSON.parse(event.data));
         if (_.isError(result))
